@@ -1,11 +1,15 @@
+import jdk.management.resource.internal.TotalResourceContext;
+
+import java.sql.Time;
 import java.util.ArrayList;
 
 public class Driver {
     public static void main(String [] args){
 
+        final int N = 21;
 
 
-        Board b = new Board(21);
+        Board b = new Board(N);
         /*
         //a solved initial state for testing
         int [] arr = {3,1,4,2};
@@ -16,7 +20,10 @@ public class Driver {
         System.out.println();
         System.out.println("Number of attacks: " + b.totalAttacks());
 
+        long time1 = System.nanoTime();
         Board result = SimAnneal.run(b);
+        long elapsedTime1 = System.nanoTime() - time1;
+
 
         System.out.println();
         result.printBoardStr();
@@ -25,18 +32,45 @@ public class Driver {
 
         System.out.println("Fitness score of this board = " + result.fitnessScore());
         System.out.println("Maximum possible fitness score = " + result.maxAttacks());
+        System.out.println("Time elapsed: " + elapsedTime1 + "ns, (" + (elapsedTime1/1000000000.0) + "s)");
+
+        System.out.println("\n\n");
 
 
 
         ArrayList<Board> pop = new ArrayList<>();
 
-        for(int i=0; i<8; i++){
-            pop.add(new Board(8));
-        }
-        Board sol = GeneticAlg.run(pop);
-        sol.printBoardStr();
-        System.out.println("Total attacks: " + sol.totalAttacks());
+        int popSize = 10;
+        long totalElapsed2 = 0;
+        int failCount=0;
+        int successCount=0;
+        for(int k=0; k<popSize; k++) {
 
+
+            for (int i = 0; i < N * 2; i++) {
+                pop.add(new Board(N));
+            }
+            long time2 = System.nanoTime();
+            Board sol = GeneticAlg.run(pop);
+
+            long elapsedTime2 = System.nanoTime() - time2;
+            totalElapsed2 += elapsedTime2;
+
+            if(sol.fitnessScore == sol.maxAttacks()){
+                successCount++;
+            }
+
+
+
+            //sol.printBoardStr();
+            //System.out.println("Total attacks: " + sol.totalAttacks());
+            //System.out.println("Time elapsed: " + elapsedTime2 + "ns, (" + (elapsedTime2 / 1000000000.0) + "s)");
+        }
+
+        double successRate = (double)successCount/(double)popSize;
+
+        System.out.println("Time elapsed for 10 tests: " + totalElapsed2 + "ns, (" + (totalElapsed2 / 1000000000.0) + "s)");
+        System.out.println("Success Rate = " + successRate);
 
         //test
         /*Board x = new Board(8);

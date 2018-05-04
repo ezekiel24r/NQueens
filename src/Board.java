@@ -1,19 +1,22 @@
 import java.util.ArrayList;
 
-public class Board {
+public class Board implements Comparable<Board> {
     private ArrayList<Integer> queenPos;
+    public int fitnessScore;
     private int SIZE;
 
     Board(int n){
         queenPos = new ArrayList<>();
         SIZE = n;
         randomize();
+        fitnessScore();
     }
 
     Board(int n, int [] array){
         queenPos = new ArrayList<>();
         SIZE = n;
         setBoard(array);
+        fitnessScore();
     }
 
     Board(Board in){
@@ -22,6 +25,7 @@ public class Board {
         if(queenPos.isEmpty()) {
             this.queenPos.addAll(in.queenPos);
         }
+        this.fitnessScore = in.fitnessScore;
     }
 
 
@@ -74,7 +78,8 @@ public class Board {
 
     //fitnessScore used so that higher values is a better board position.
     public int fitnessScore(){
-        return (maxAttacks() - totalAttacks());
+        fitnessScore = (maxAttacks() - totalAttacks());
+        return fitnessScore;
     }
 
 
@@ -112,5 +117,10 @@ public class Board {
 
         }
         System.out.println();
+    }
+
+    @Override
+    public int compareTo(Board right) {
+        return Integer.compare(right.fitnessScore(), this.fitnessScore());
     }
 }
