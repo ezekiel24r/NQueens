@@ -5,7 +5,7 @@ public class SimAnneal {
 
         current = new Board(in);
         Double E = Math.E;
-        Double t = 100000.0;
+        Double t;
 
         Double deltaE;
         int randRow, randIndex;
@@ -45,6 +45,6 @@ public class SimAnneal {
 
     private static double schedule(double t){
         //System.out.println("schedule(" + t + ") = " + ( -(1.0/10000.0)*(t)  + 30.0));
-        return ( -(1.0/100000.0)*(t)  + 1.0);
+        return ((-(1.0 / 40000.0) * (t)) + .50);
     }
 }

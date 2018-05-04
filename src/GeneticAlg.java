@@ -4,56 +4,53 @@ import java.util.Collections;
 
 
 public class GeneticAlg {
-    //eliteRatio: the only the best (100/n)% will be chosen for reproduction
-    private static final int eliteRatio = 5;
-    private static final double mutationChance = 0.90;
+    //ELITE_RATIO: the only the best (100/n)% will be chosen for reproduction
+    private static final int ELITE_RATIO = 10;
+    //MUTATION_CHANCE: the chance that a gene will mutate when the child is created
+    private static final double MUTATION_CHANCE = 0.90;
+    //immigration ratio: an optional ratio of children to new randomly generated members
+    // a value of 1.0 disables this feature, a value of 0 is a completely random search for a solution
+    private static final double IMMIGRATION_RATIO = 1.0;
+
+    private static final double MAX_GENERATIONS = 1000;
 
     public static Board run(ArrayList<Board> pop){
         Board solution = pop.get(0);
 
         Collections.sort(pop);
 
-        for(int i=0; i<10000; i++){
+        for(int i = 0; i< MAX_GENERATIONS; i++){
             ArrayList<Board> newPop = new ArrayList<>(pop.size());
 
-
-            /*for(int j=0; j<pop.size()/10; j++){
-                newPop.add(pop.get(j));
-            }*/
-
-            //75% generated from current population
-            for(int j=0; j<pop.size()*(.75); j++){
+            //% generated from current population
+            for(int j = 0; j<pop.size()*(IMMIGRATION_RATIO); j++){
                 Board x = randomSelection(pop);
                 Board y = randomSelection(pop);
 
                 Board child = reproduce(x,y);
 
-                if(RenselTools.probability(mutationChance)){
+                if(RenselTools.probability(MUTATION_CHANCE)){
                     child = mutate(child);
                 }
 
-                //the insert function adds
-                insert(newPop, child);
-                //newPop.add(child);
 
-                //System.out.println("Fitness: " + j + " " + child.fitnessScore());
+                //the insert function sorts children into the new population (so it stays sorted)
+                insert(newPop, child);
+
             }
 
-            //25% is new individuals added to the population (this helps ensure we don't get stuck in a local max)
-            for(int j = ((int)(pop.size()*(.75))); j<pop.size(); j++){
+            //% of new individuals added to the population
+            for(int j = ((int)(pop.size()*(IMMIGRATION_RATIO))); j<pop.size(); j++){
                 newPop.add(new Board(pop.get(0).getSize()));
             }
-            //population = newPop
+
             pop = newPop;
-            //Collections.sort(pop);
-            //for(int j = 0; j<pop.size(); j++){
+
             solution = pop.get(0);
             if(solution.fitnessScore == solution.maxAttacks()){
                 //System.out.println("Solution found on Gen: " + i);
                 return solution;
             }
-            //}
-            //System.out.println("Gen: " + i);
         }
 
         return solution;
@@ -63,14 +60,14 @@ public class GeneticAlg {
     public static Board randomSelection(ArrayList<Board> pop){
         //Collections.sort(pop);
         Board result = new Board(pop.get(0).getSize());
-        int fitnessVal[] = new int [pop.size()/eliteRatio];
+        int fitnessVal[] = new int [pop.size()/ ELITE_RATIO];
         int fitSum = 0;
-        for(int i=0; i<pop.size()/eliteRatio; i++){
+        for(int i = 0; i<pop.size()/ ELITE_RATIO; i++){
             fitSum += pop.get(i).fitnessScore;
             fitnessVal[i] = fitSum;
         }
         int randVal = RenselTools.getRandomInt(0,fitSum);
-        for(int i=0; i<pop.size()/eliteRatio; i++){
+        for(int i = 0; i<pop.size()/ ELITE_RATIO; i++){
             if(randVal <= fitnessVal[i]){
                 result = pop.get(i);
                 return result;
@@ -79,8 +76,8 @@ public class GeneticAlg {
         return result;
     }
 
-    //this is the function as defined in the class slides
-    /*public static Board reproduce(Board x, Board y){
+    //this is the reproduce function as defined in the class slides
+    public static Board reproduce(Board x, Board y){
         int n = x.getSize();
         int c = RenselTools.getRandomInt(0,n);
         int [] child = new int[n];
@@ -90,12 +87,11 @@ public class GeneticAlg {
         for(int i=c; i<n; i++){
             child[i] = y.getPos(i);
         }
-        Board result = new Board(n, child);
-        return result;
-    }*/
+        return new Board(n, child);
+    }
 
     //this reproduce function can take an element from x or y at any position
-    public static Board reproduce(Board x, Board y){
+    /*public static Board reproduce(Board x, Board y){
         int n = x.getSize();
         int [] child = new int[n];
         for(int i=0; i<n; i++){
@@ -107,7 +103,9 @@ public class GeneticAlg {
 
         }
         return new Board(n, child);
-    }
+    }*/
+
+
 
     public static Board mutate(Board x){
         Board result = new Board(x);
@@ -117,6 +115,9 @@ public class GeneticAlg {
         result.fitnessScore();
         return result;
     }
+
+
+
 
     private static void insert(ArrayList<Board> arrList, Board in){
         for(int i=0; i<arrList.size(); i++){
