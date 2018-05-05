@@ -29,7 +29,7 @@ public class Board implements Comparable<Board> {
     }
 
 
-    public void setBoard(int [] in){
+    private void setBoard(int [] in){
         for(int i=0; i<SIZE; i++){
             queenPos.add(i,in[i]);
         }
@@ -39,7 +39,7 @@ public class Board implements Comparable<Board> {
         queenPos.set(index, row);
     }
 
-    public void randomize(){
+    private void randomize(){
         for(int i=0; i<SIZE; i++){
             queenPos.add(i, RenselTools.getRandomInt(1, SIZE));
         }
@@ -81,8 +81,6 @@ public class Board implements Comparable<Board> {
         fitnessScore = (maxAttacks() - totalAttacks());
         return fitnessScore;
     }
-
-
 
     public int getPos(int n){
         return queenPos.get(n);

@@ -2,10 +2,9 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RenselTools {
-    //get random Int between 1 and max, inclusive
+    //get random Int between min and max, inclusive
     public static int getRandomInt(int min, int max){
         return ThreadLocalRandom.current().nextInt(min, max + 1);
-
     }
 
     public static boolean probability(double in){

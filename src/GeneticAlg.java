@@ -17,6 +17,7 @@ public class GeneticAlg {
     public static Board run(ArrayList<Board> pop){
         Board solution = pop.get(0);
 
+        //sort first population by fitness score
         Collections.sort(pop);
 
         for(int i = 0; i< MAX_GENERATIONS; i++){
@@ -33,17 +34,14 @@ public class GeneticAlg {
                     child = mutate(child);
                 }
 
-
                 //the insert function sorts children into the new population (so it stays sorted)
                 insert(newPop, child);
-
             }
 
             //% of new individuals added to the population
             for(int j = ((int)(pop.size()*(IMMIGRATION_RATIO))); j<pop.size(); j++){
                 newPop.add(new Board(pop.get(0).getSize()));
             }
-
             pop = newPop;
 
             solution = pop.get(0);
@@ -57,8 +55,7 @@ public class GeneticAlg {
     }
 
 
-    public static Board randomSelection(ArrayList<Board> pop){
-        //Collections.sort(pop);
+    private static Board randomSelection(ArrayList<Board> pop){
         Board result = new Board(pop.get(0).getSize());
         int fitnessVal[] = new int [pop.size()/ ELITE_RATIO];
         int fitSum = 0;
@@ -77,7 +74,7 @@ public class GeneticAlg {
     }
 
     //this is the reproduce function as defined in the class slides
-    public static Board reproduce(Board x, Board y){
+    private static Board reproduce(Board x, Board y){
         int n = x.getSize();
         int c = RenselTools.getRandomInt(0,n);
         int [] child = new int[n];
@@ -90,7 +87,7 @@ public class GeneticAlg {
         return new Board(n, child);
     }
 
-    //this reproduce function can take an element from x or y at any position
+    //this reproduce function can take an element from x or y at any position (it seems to perform only slightly worse)
     /*public static Board reproduce(Board x, Board y){
         int n = x.getSize();
         int [] child = new int[n];
@@ -100,14 +97,12 @@ public class GeneticAlg {
             }else{
                 child[i] = y.getPos(i);
             }
-
         }
         return new Board(n, child);
     }*/
 
 
-
-    public static Board mutate(Board x){
+    private static Board mutate(Board x){
         Board result = new Board(x);
         int index = RenselTools.getRandomInt(0,(x.getSize()-1));
         int position = RenselTools.getRandomInt(1,x.getSize());
@@ -115,8 +110,6 @@ public class GeneticAlg {
         result.fitnessScore();
         return result;
     }
-
-
 
 
     private static void insert(ArrayList<Board> arrList, Board in){
